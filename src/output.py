@@ -14,10 +14,9 @@ class _Output(object):
              3. Избранные отели
     """
 
-    def __init__(self, conn, id_chat):
+    def __init__(self, conn):
         self.conn = conn
         self.c = conn.cursor()
-        self._id_chat = id_chat
 
     def output_all(self):
         self._get_pd_tables('SELECT * FROM chat')
@@ -31,13 +30,13 @@ class _Output(object):
         df = pd.read_sql(sql, self.conn)
         print(df.head())
 
-    def dynamics_of_prices(self, hotel):
+    def dynamics_of_prices(self, hotel,id_chat):
         id_hotel = hash_string(hotel)
         prices = "SELECT date, price from prices where id_hotel = %d" % id_hotel
         self.c.execute(prices)
         fetch = self.c.fetchall()
         if fetch is not None:
-            name = str(self._id_chat) + ".png"
+            name = str(id_chat) + ".png"
             dir = './dynamic_of_price/'
             if not os.path.exists(dir):
                 os.makedirs(dir)

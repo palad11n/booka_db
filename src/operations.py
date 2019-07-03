@@ -7,12 +7,11 @@ from datahotel import DataHotel
 class _Operations(object):
     """Операции над БД: создание таблиц, вставка элементов, выборка"""
 
-    def __init__(self, conn, input,href):
+    def __init__(self, conn, input):
         self.conn = conn
         self.c = conn.cursor()
         self._create_table()
         self._input = input
-        self._href=href
 
     @property
     def get_is_exist_request(self):
@@ -94,14 +93,14 @@ class _Operations(object):
         data = DataHotel(info[0], info[1], info[2], info[3], info[4], info[5], info[6], info[7], info[8], info[9])
         return data
 
-    def insert(self, hotels):
+    def insert(self, hotels, request):
         try:
-            check = self.select_in("chat", "*", "id_chat", (self._input.get_id_chat,))
+            check = self.select_in("chat", "*", "id_chat", (request.get_id_chat,))
             if len(check) == 0:
-                self.insert_in("chat", "id_chat", (self._input.get_id_chat,))
+                self.insert_in("chat", "id_chat", (request.get_id_chat,))
             date = dt.today().strftime('%Y-%m-%d %H:%M')
             self.insert_in("history_requests", "id_chat, input, date, href",
-                           (self._input.get_id_chat, self._input.get_input, date, self._href))
+                           (request.get_id_chat, request.get_input, date, request.get_href))
             id_request = self.c.lastrowid
             for i in hotels:
                 hash = hash_string(i.get_name)
